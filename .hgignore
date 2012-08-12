@@ -1,0 +1,19 @@
+# use glob syntax.
+syntax: glob
+
+# archivos generales
+*.zip
+
+# archivos de compilación
+*.bin
+*.hex
+*.lst
+
+# archivos de hg
+*.orig
+
+# archivos de kicad
+*.gbl
+*.drl
+*-cache.lib
+*.dcm
