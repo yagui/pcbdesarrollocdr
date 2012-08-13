@@ -1,5 +1,13 @@
-# TARGET es el nombre del proyecto
-TARGET = test2
+# Makefile general para uso de la bilioteca.
+# Copiar este Makefile dentro de cada proyecto y editar las opciones
+# correspondientes
+
+# TARGET es el nombre del proyecto y es el nombre que se usa para generar el
+# binario
+TARGET = test
+#TARGET = test2
+
+# PATH de la biblioteca
 LIBCDR = ../library/
 
 # MMCU es el microcontralador para el target para el avr-gcc
@@ -8,20 +16,90 @@ LIBCDR = ../library/
 # atmega8/88/88a/88p/88pa
 MMCU = atmega88a
 
-CLK_EXT = 12288000UL #cristal externo
-#CLK_EXT = 18432000UL #cristal externo
-CLK_INT =  8000000UL #oscilador interno cercano a 8 Mhz
-# F_CPU es la frecuencia de trabajo del microcontrolador. Es la base a partir 
-# de la cual se calculan los delays
-# En caso de modificar los valores de los fuses, borrar la variable F_CPU y 
-# descomentar las siguientes lineas
-# F_CPU = 8000000UL
+CLK_EXT = 18432000UL #cristal externo
+#CLK_EXT = 12288000UL #cristal externo (PCB original)
+#CLK_INT =  8000000UL #oscilador interno cercano a 8 Mhz
+CLK_INT =  8243700UL #si se conoce con mayor precision el oscilador interno
 
-CC = avr-gcc
+DIV8 = 0   # 1 si usamos el prescaler de clock en 8. 0 sin prescaler
+EXTCLK = 1 # 1 si usamos el clock externo. 0 si usamos el clock interno
 
-# Flags de optimizacion '-Os' tamaño '-O3' velocidad
-# Si se deja -O vacio el compilador elige '-01'
-CFLAGS = -O2 -g -Wall
+# F_CPU es la frecuencia de trabajo del microcontrolador.
+# Es la base a partir de la cual se calculan los delays.
+
+ifeq ($(MMCU), atmega8)
+	# 0xD9 es el default  (pagina 223)
+	# ojo con el bit 5, siempre debe ser 0 -> XX0XXXXX
+	HFUSE = 0xD9
+
+	# (pagina 224)
+	# 0xE1 es el default (oscilador interno de 1 Mhz) CLK = CLK_INT/8
+	# 0xE2 (oscilador interno de 2 Mhz) CLK = CLK_INT/4
+	# 0xE3 (oscilador interno de 4 Mhz) CLK = CLK_INT/2
+	# 0xE4 (oscilador interno de 8 Mhz) CLK = CLK_INT
+	LFUSE = 0xE4
+
+	CLK = CLK_INT
+
+else
+ 	ifeq ($(findstring atmega88,$(MMCU)), atmega88)
+ 		# 0xDF es el default  (pagina 299)
+ 		# ojo con el bit 5, siempre debe ser 0 -> XX0XXXXX
+ 		HFUSE = 0xDF
+ 
+ 		# 0x62 es el default (con oscilador interno de 1Mhz) (pagina 301)
+ 		# 0x6F cristal externo con DIV8
+ 		# 0xE2 oscilador interno sin DIV8 (8 Mhz)
+		# 0xEF cristal externo sin DIV8
+ 		ifeq ($(DIV8),1)
+ 			ifeq ($(CLKEXT),0)
+ 				LFUSE = 0x62
+ 				CLK = $(CLK_INT)/8
+ 			else
+ 				LFUSE = 0x6F
+ 				CLK = $(CLK_EXT)/8
+ 			endif
+ 		else
+ 			ifeq ($(CLKEXT),0)
+ 				LFUSE = 0xE2
+ 				CLK = $(CLK_INT)
+ 			else
+ 				LFUSE = 0xEF
+ 				CLK = $(CLK_EXT)
+ 			endif
+ 		endif
+ 	else
+		$(error Target no soportado)
+ 	endif
+endif
+
+# TARGET_P es el microcontrolador para el target del programador
+# Para ver el listado de posibles opciones hacer:
+#      avrdude -p ?
+ifeq ($(MMCU), atmega8)
+	MMCU_N = 0
+	TARGET_P = m8
+else
+ 	ifeq ($(findstring atmega88,$(MMCU)), atmega88)
+ 		MMCU_N = 1
+ 		ifeq ($(MMCU), atmega88) 
+ 			TARGET_P = m88
+ 		else
+ 			ifeq ($(MMCU), atmega88a) 
+ 				TARGET_P = m88
+ 			else
+ 				ifeq ($(MMCU), atmega88p) 
+ 					TARGET_P = m88
+ 				else
+					TARGET_P = m88pa
+ 				endif
+ 			endif
+ 		endif
+ 	else
+		$(error Target no soportado)
+ 	endif
+endif
+
 
 # Las siguiente dos lineas agregan todos los archivos que se encuentran en el
 # directorio local, de extension .c y .h, en las correspondientes variables.
@@ -36,51 +114,35 @@ INC =
 INC += $(LIBCDR)/defs.h
 INC += $(LIBCDR)/board.h
 
-#SRC += $(LIBCDR)/usart.c
-#INC += $(LIBCDR)/usart.h
+SRC += $(LIBCDR)/usart.c
+INC += $(LIBCDR)/usart.h
 
-#SRC += $(LIBCDR)/adc.c
-#INC += $(LIBCDR)/adc.h
+SRC += $(LIBCDR)/adc.c
+INC += $(LIBCDR)/adc.h
 
 
-ifeq ($(MMCU), atmega8)
-	TARGET_P = m8
-	
-	# 0xD9 es el default  (pagina 223)
-	# ojo con el bit 5, siempre debe ser 0 -> XX0XXXXX
-	HFUSE = 0xd9
-	
-	# 0xE1 es el default (pagina 224) (oscilador interno de 1 Mhz) CLK = CLK_INT/8 
-	# 0xE2 (oscilador interno de 2 Mhz) CLK = CLK_INT/4
-	# 0xE3 (oscilador interno de 4 Mhz) CLK = CLK_INT/2
-	# 0xE4 (oscilador interno de 8 Mhz) CLK = CLK_INT
-	LFUSE = 0xe4
+CC = avr-gcc
 
-	MMCU_N = 0
-else
-	ifeq ($(findstring atmega88,$(MMCU)), atmega88)
-		TARGET_P = m88
-		HFUSE = 0xDF
 
-	 	# 0x62 es el default (oscilador interno de 1Mhz con DIV8) (pagina 301) -> FCPU = $(CLK_INT)/8
-		# 0xE2 oscilador interno sin DIV8 (8 Mhz) -> FCPU = $(CLK_INT)
-	 	# 0x6F cristal externo con DIV8 -> FCPU = $(CLK_EXT)
-		# 0xEF cristal externo sin DIV8 -> FCPU = $(CLK_EXT)/8
-		LFUSE = 0xEF
-		ifndef F_CPU
-			F_CPU = $(CLK_EXT)
-		endif
-			MMCU_N = 1
-	else
-$(error Target no soportado)
-	endif
-endif
+CDEFINES =
+CDEFINES += -DF_CPU=$(CLK)
+CDEFINES += -mmcu=$(MMCU)
+CDEFINES += -DMMCU=$(MMCU_N)
 
-CDEFINES = -DMMCU=$(MMCU_N) -DF_CPU=$(F_CPU) -mmcu=$(MMCU)
+# Flags de compilacion
+CFLAGS =
+CFLAGS += -O2 # Optimizacion '-Os' tamaño '-O3' velocidad. Con -O vacio el compilador elige '-01'
+CFLAGS += -g # Agrega informacion de debug ???
+CFLAGS += -Wall # All warnings
 
-AVROBJFLAGS = -j .text -j .data
+CLDFLAGS =
+
+AVROBJFLAGS = 
+AVROBJFLAGS += -j .text
+AVROBJFLAGS += -j .data
 
 LIBINCLUDE = $(LIBCDR)
+
 # Reglas
 ########
 
@@ -88,7 +150,7 @@ LIBINCLUDE = $(LIBCDR)
 all: hex
 
 bin: $(SRC) $(INC)
-	$(CC) $(CDEFINES) $(CFLAGS) -o $(TARGET).bin $(SRC) -I$(LIBINCLUDE)
+	$(CC) $(CDEFINES) $(CFLAGS) $(CLDFLAGS) -o $(TARGET).bin -I$(LIBINCLUDE) $(SRC) 
 	avr-objdump -h -S $(TARGET).bin > "$(TARGET).lst"
 	avr-size -d $(TARGET).bin
 
@@ -122,4 +184,4 @@ eeprom_write:
 	avrdude -c usbtiny -p $(TARGET_P) -U eeprom:w:eeprom.hex:r
 
 clean:
-	rm -rf $(TARGET).hex $(TARGET).bin $(TARGET).s $(TARGET).lst *.o hfuse.hex lfuse.hex
+	rm -rf $(TARGET).bin $(TARGET).lst *.o hfuse.hex lfuse.hex $(TARGET).hex
