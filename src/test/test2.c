@@ -4,13 +4,14 @@
 #include "board.h"
 
 int main (void) {
-  int i;
+//  int i;
     // Iniciamos y apagamos los LEDs
   Led1Init();
   
   while(1){
     Led1Toggle();
-    for(i=0;i<50000;i++);
+    _delay_ms(500);
+//    for(i=0;i<50000;i++);
   }
 
 }
