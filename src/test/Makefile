@@ -4,42 +4,30 @@
 
 # TARGET es el nombre del proyecto y es el nombre que se usa para generar el
 # binario
-#TARGET = test
-TARGET = test2
+TARGET = test
 
 # PATH de la biblioteca
 LIBCDR = ../library
+
+OBJECTS = $(TARGET).o
+# Si hay algun otro archivo que deba compilarse debe agregarse el .o 
+# correspondiente. Por ejemplo un archivo func.c que tiene funciones 
+# encapsuladas, debe incluirse:
+# OBJECTS += func.o
+OBJECTS +=
 
 # MMCU es el microcontralador para el target para el avr-gcc
 # Para ver el listado de posibles opciones ir a:
 #      http://avr-libc.nongnu.org/user-manual/index.html
 # atmega8/88/88a/88p/88pa
-MMCU = atmega88pa
+MMCU = atmega88a
 
-#Si no se define, toman valores por default 0 y 1
-#DIV8 = 0 # 1 si usamos el prescaler de clock en 8. 0 sin prescaler
-#CLKEXT = 1 # 1 si usamos el clock externo. 0 si usamos el clock interno
+#CLK_EXT = 18432000UL #cristal externo
+#CLK_INT =  8243700UL #si se conoce con mayor precision el oscilador interno
 
-include $(LIBCDR)/clkdef.mk
-include $(LIBCDR)/target.mk
-
-# Las siguiente dos lineas agregan todos los archivos que se encuentran en el
-# directorio local, de extension .c y .h, en las correspondientes variables.
-# Utilizarlas si se desea compilar todos los archivos fuentes.
-#SRC = $(shell ls *.c)
-#INC = $(shell ls *.h)
-# Como segunda opcion, se pueden agregar a mano solo los archivos que se desean
-# compilar
-SRC = $(TARGET).c
-INC = 
-
-INC += $(LIBCDR)/defs.h
-INC += $(LIBCDR)/board.h
-
-include $(LIBCDR)/usart.mk
-include $(LIBCDR)/adc.mk
+#FUSE_DIV8 = 0 # 1 si usamos el prescaler de clock en 8. 0 sin prescaler
+#FUSE_CLKEXT = 1 # 1 si usamos el clock externo. 0 si usamos el clock interno
 
 OPTIMIZATION = 2
 
 include $(LIBCDR)/setup.mk
-

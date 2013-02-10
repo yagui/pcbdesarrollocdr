@@ -7,8 +7,8 @@ CLK_EXT_8 ?= 2304000UL #cristal externo
 CLK_INT ?=  8243700UL #si se conoce con mayor precision el oscilador interno
 CLK_INT_8 ?=  1030462UL #si se conoce con mayor precision el oscilador interno
 
-DIV8 ?= 0 # 1 si usamos el prescaler de clock en 8. 0 sin prescaler
-CLKEXT ?= 1 # 1 si usamos el clock externo. 0 si usamos el clock interno
+FUSE_DIV8 ?= 0 # 1 si usamos el prescaler de clock en 8. 0 sin prescaler
+FUSE_CLKEXT ?= 1 # 1 si usamos el clock externo. 0 si usamos el clock interno
 
 # F_CPU es la frecuencia de trabajo del microcontrolador.
 # Es la base a partir de la cual se calculan los delays.
@@ -36,8 +36,8 @@ else ifeq ($(findstring atmega88,$(MMCU)), atmega88)
  	# 0x6F cristal externo con DIV8
  	# 0xE2 oscilador interno sin DIV8 (8 Mhz)
 	# 0xEF cristal externo sin DIV8
-	ifeq ($(strip $(DIV8)),1)
-		ifeq ($(strip $(CLKEXT)),0)
+	ifeq ($(strip $(FUSE_DIV8)),1)
+		ifeq ($(strip $(FUSE_CLKEXT)),0)
  			LFUSE = 0x62
  			CLK = $(CLK_INT_8)
  		else
@@ -45,7 +45,7 @@ else ifeq ($(findstring atmega88,$(MMCU)), atmega88)
  			CLK = $(CLK_EXT_8)
  		endif
  	else
-		ifeq ($(strip $(CLKEXT)),0)
+		ifeq ($(strip $(FUSE_CLKEXT)),0)
  			LFUSE = 0xE2
  			CLK = $(CLK_INT)
  		else
