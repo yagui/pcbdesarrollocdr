@@ -3,12 +3,16 @@ syntax: glob
 
 # archivos generales
 *.zip
+*.swp
+*~
 
 # archivos de compilación
 *.bin
 *.hex
 *.lst
 *.elf
+*.map
+*.d
 *.o
 *.a
 

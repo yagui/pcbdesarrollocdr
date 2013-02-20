@@ -4,6 +4,7 @@ OBJDUMP = avr-objdump
 OBJCOPY = avr-objcopy
 SIZE = avr-size
 RM = rm -rf
+
 include $(LIBCDR)/clkdef.mk
 include $(LIBCDR)/target.mk
 
@@ -28,7 +29,7 @@ CFLAGS += -funsigned-char -funsigned-bitfields -fpack-struct -fshort-enums -std=
 # genera los archivos de dependencias
 CFLAGS += -MMD -MP -MT $(*F).o -MF dep/$(@F).d 
 
-CINCLUDE = -I$(LIBCDR)
+CCINCLUDES = -I$(LIBCDR)
 
 LIBS := -lcdr $(LIBS)
 LDFLAGS = -Wl,-Map=$(TARGET).map,--gc-sections -L$(LIBCDR) -mmcu=$(MMCU)
@@ -52,7 +53,7 @@ msg_start:
 
 elf: dep $(OBJECTS) libcdr.a
 	@echo "Clock = $(CLK) | Lfuse = $(LFUSE) | Hfuse = $(HFUSE)"
-	@$(CC) $(LDFLAGS) -o $(TARGET).elf $(OBJECTS) $(LIBS)
+	$(CC) $(LDFLAGS) -o $(TARGET).elf $(OBJECTS) $(LIBS)
 	@$(OBJDUMP) -h -S $(TARGET).elf > $(TARGET).lst
 	@$(SIZE) -d --format=avr --mcu=$(MMCU) $(TARGET).elf
 	@$(SIZE) -d $(TARGET).elf
@@ -73,7 +74,7 @@ libcdr.a: $(COMMON_OBJECTS)
 #  .c or .cpp files to .s
 
 .c.o:
-	@$(CC) $(CFLAGS) $(CDEFINES) $(CINCLUDE) -c $< -o $(<:.c=.o)
+	$(CC) $(CFLAGS) $(CDEFINES) $(CCINCLUDES) -c $< -o $(<:.c=.o)
 
 # Reglas para programar el target
 program: hex
