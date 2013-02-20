@@ -53,8 +53,8 @@
 #define PIN_C7        def_pin_reg(PORT_C7_NAME)
 #define DDR_C7        def_ddr_reg(PORT_C7_NAME)
 
-#define PORT_C8_NAME  C
-#define C8_NUM        0
+#define PORT_C8_NAME  B
+#define C8_NUM        1
 
 #define PORT_C8       def_port_reg(PORT_C8_NAME)
 #define PIN_C8        def_pin_reg(PORT_C8_NAME)
@@ -75,14 +75,14 @@
 #define DDR_R1        def_ddr_reg(PORT_R1_NAME)
 
 #define PORT_R2_NAME  B
-#define R2_NUM        1
+#define R2_NUM        2
 
 #define PORT_R2       def_port_reg(PORT_R2_NAME)
 #define PIN_R2        def_pin_reg(PORT_R2_NAME)
 #define DDR_R2        def_ddr_reg(PORT_R2_NAME)
 
-#define PORT_R3_NAME  B
-#define R3_NUM        2
+#define PORT_R3_NAME  D
+#define R3_NUM        4
 
 #define PORT_R3       def_port_reg(PORT_R3_NAME)
 #define PIN_R3        def_pin_reg(PORT_R3_NAME)
@@ -94,7 +94,7 @@
 
 #define ColumnOn(N) ClearBit(PORT_C##N,C##N##_NUM)
 #define ColumnOff(N) SetBit(PORT_C##N,C##N##_NUM)
-#define RowOn(N) ClearBit(PORT_R##N,C##N##_NUM)
-#define RowOff(N) SetBit(PORT_R##N,C##N##_NUM)
+#define RowOn(N) ClearBit(PORT_R##N,R##N##_NUM)
+#define RowOff(N) SetBit(PORT_R##N,R##N##_NUM)
 
 #endif

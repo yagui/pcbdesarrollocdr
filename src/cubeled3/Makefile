@@ -20,12 +20,14 @@ OBJECTS +=
 # Para ver el listado de posibles opciones ir a:
 #      http://avr-libc.nongnu.org/user-manual/index.html
 # atmega8/88/88a/88p/88pa
-MMCU = atmega88a
+MMCU = atmega88pa
 
 #CLK_EXT = 18432000UL #cristal externo
 #CLK_INT =  8243700UL #si se conoce con mayor precision el oscilador interno
 
 #FUSE_DIV8 = 0 # 1 si usamos el prescaler de clock en 8. 0 sin prescaler
 #FUSE_CLKEXT = 1 # 1 si usamos el clock externo. 0 si usamos el clock interno
+
+#OPTIMIZATION = 2
 
 include $(LIBCDR)/setup.mk
