@@ -20,7 +20,7 @@ OBJECTS +=
 # Para ver el listado de posibles opciones ir a:
 #      http://avr-libc.nongnu.org/user-manual/index.html
 # atmega8/88/88a/88p/88pa
-MMCU = atmega88a
+MMCU = atmega88
 
 # TARGET_P es el microcontrolador para el target del programador
 # Para ver el listado de posibles opciones hacer:
@@ -195,6 +195,7 @@ clean:
 	rm -rf $(TARGET).hex
 	rm -rf $(TARGET).elf
 	rm -rf *.o 
+	rm -rf *.d 
 	rm -rf hfuse.hex lfuse.hex 
 	rm -rf $(OBJECTS)
 

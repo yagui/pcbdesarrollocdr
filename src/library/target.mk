@@ -1,6 +1,7 @@
 # TARGET_P es el microcontrolador para el target del programador
 # Para ver el listado de posibles opciones hacer:
 #      avrdude -p ?
+ifndef TARGET_P
 STRIPMMCU = $(strip $(MMCU))
 ifeq ($(STRIPMMCU), atmega8)
 	MMCU_N = 0
@@ -21,4 +22,4 @@ $(error Target $(MMCU) no soportado)
 else
 $(error Target $(MMCU) no soportado)
 endif
-
+endif

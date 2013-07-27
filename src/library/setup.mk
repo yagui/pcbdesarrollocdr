@@ -5,6 +5,7 @@ OBJCOPY = avr-objcopy
 SIZE = avr-size
 RM = rm -rf
 
+include $(LIBCDR)/config.mk
 include $(LIBCDR)/clkdef.mk
 include $(LIBCDR)/target.mk
 
@@ -12,8 +13,6 @@ CDEFINES =
 CDEFINES += -DF_CPU=$(CLK)
 CDEFINES += -mmcu=$(MMCU)
 #CDEFINES += -DMMCUN=$(MMCU_N)
-
-OPTIMIZATION ?= 2
 
 # Flags de compilacion
 CFLAGS =
@@ -51,7 +50,7 @@ all: msg_start hex
 msg_start:
 	@echo "********Iniciando compilacion *********"
 
-elf: dep $(OBJECTS) libcdr.a
+elf: $(OBJECTS) libcdr.a
 	@echo "Clock = $(CLK) | Lfuse = $(LFUSE) | Hfuse = $(HFUSE)"
 	$(CC) $(LDFLAGS) -o $(TARGET).elf $(OBJECTS) $(LIBS)
 	@$(OBJDUMP) -h -S $(TARGET).elf > $(TARGET).lst
@@ -114,5 +113,4 @@ clean:
 
 .PHONY: clean eeprom_read eeprom_write fuse fuses_read program program_dw
 
-#-include $(shell mkdir dep 2>NUL) $(wildcard dep/*)
--include $(shell mkdir dep) $(wildcard dep/*)
+-include $(shell mkdir -p dep) $(wildcard dep/*)
