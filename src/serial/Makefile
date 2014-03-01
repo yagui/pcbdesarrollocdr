@@ -12,7 +12,7 @@ LIBCDR = ../library
 # El archivo principal del proyecto suele llamarse main.c o target.c
 # (donde target es el nombre del proyecto). Entonces debemos agregar el
 # archivo objeto main.o (o target.o)
-OBJECTS = main.o
+OBJECTS = helloworld.o
 # Ademas, todos los archivos *.c que deban compilarse deben incluirse 
 # como *.o. Por ejemplo un archivo func.c que tiene funciones encapsuladas,
 # debe incluirse como:

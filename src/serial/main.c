@@ -24,7 +24,7 @@ int main(void){
   contador = 254;
   ciclo = 255;
   TIMSK1= 0x01;  
-  USART0Setup();
+  USART0Setup(USART_BAUDRATE_115200,USART_CHARSIZE_8BIT,USART_PARITY_DIS,USART_STOP_1BIT,USART_MODE_ASYNC);
   TCCR1B = 0x01;
   while(1){
     _delay_ms(500);
