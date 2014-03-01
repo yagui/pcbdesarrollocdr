@@ -20,7 +20,7 @@ OBJECTS +=
 # Para ver el listado de posibles opciones ir a:
 #      http://avr-libc.nongnu.org/user-manual/index.html
 # atmega8/88/88a/88p/88pa
-MMCU = atmega88
+MMCU = atmega88pa
 
 # TARGET_P es el microcontrolador para el target del programador
 # Para ver el listado de posibles opciones hacer:
@@ -36,9 +36,9 @@ else ifeq ($(findstring atmega88,$(STRIPMMCU)), atmega88)
 	else ifeq ($(STRIPMMCU), atmega88a) 
  		TARGET_P = m88
 	else ifeq ($(STRIPMMCU), atmega88p) 
- 		TARGET_P = m88
+ 		TARGET_P = m88p
 	else ifeq ($(STRIPMMCU), atmega88pa)
-		TARGET_P = m88pa
+		TARGET_P = m88p
 	else
 $(error Target $(MMCU) no soportado)
  	endif
@@ -166,6 +166,9 @@ hex: elf
 # Reglas para programar el target
 program: hex
 	avrdude -c usbtiny -p $(TARGET_P) -U f:w:$(TARGET).hex
+
+programf: hex
+	avrdude -c usbtiny -p $(TARGET_P) -U f:w:$(TARGET).hex -F
 
 program_dw: bin
 	avarice -w -j usb --erase --program --file $(TARGET).bin
