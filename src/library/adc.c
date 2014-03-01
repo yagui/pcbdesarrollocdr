@@ -37,41 +37,47 @@ void ADCSetup(char prescaler, char channel){
 	ADCSelectPrescaler(prescaler);
 	//Utilizamos el modo "Single Conversion"
 
-	#ifdef ADC_MODO_INT_
+#ifdef ADC_MODO_INT
 	// Habilitamos la interrupcion de finalizacion de conversion AD
 	SetBit(ADCSRA, ADIE);
 	//Utilizamos el modo "Free Run"
-	#else
+#else
 	//Deshabilitamos la interrupcion de finalizacion de conversion AD
 	//ClearBit(ADCSRA, ADIE);
-	#endif
+#endif
 
   // Prende los conversores seteando bit en el ADCSRA
   SetBit(ADCSRA, ADEN);
 }
 
+#ifdef ADC_MODO_8BITS
+char ADCGetData(){
+  return ADCH;
+}
+#else
+short ADCGetData(){
+  short temp;
+  temp = ADCL;
+  temp = (ADCH << 8) | temp;
+  return temp;
+}
+#endif
+
 
 #ifdef ADC_MODO_8BITS
   char ADCSingleConvertion() {
-    char datos;
-    ADCInitConvertion();
-    while( (ADCSRA & (1<<ADIF)) == 0);
-    // borramos el flag
-    ADCSRA |= (1<<ADIF);
-    datos = ADCH;
-    return datos;
-  }
 #else
   short ADCSingleConvertion() {
-    short temp;
+#endif
     ADCInitConvertion();
+
+#ifdef ADC_MODO_INT
+    return 0;
+#else
     while( (ADCSRA & (1<<ADIF)) == 0);
     // borramos el flag
     ADCSRA |= (1<<ADIF);
-    temp = ADCL;
-    datos = ADCH;
-    datos = (datos << 8);
-    datos |= temp;
-    return datos;
-  }
+    return ADCGetData();
 #endif
+}
+

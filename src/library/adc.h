@@ -6,7 +6,7 @@
 // Si se quieren utilizar los conversores en el modo de Interrupcion
 // dejar el siguiente define. En caso de que se quiera trabajar con la
 // funcion capturarADC comentar el siguiente define:
-//#define ADC_MODO_INT_
+#define ADC_MODO_INT
 
 // El conversor trabaja con 10 bits por default. Si se quiere utilizar 8 bits
 // descomentar la siguiente linea
@@ -32,8 +32,10 @@ void ADCSetup(char, char);
 void ADCSelectChannel(char);
 #ifdef ADC_MODO_8BITS
   char ADCSingleConvertion();
+  char ADCGetData();
 #else
   short ADCSingleConvertion();
+  short ADCGetData();
 #endif
 
 // Seteamos los tres bits ADPS1-2-3 para definir el prescaler
