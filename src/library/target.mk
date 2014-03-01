@@ -13,9 +13,9 @@ else ifeq ($(findstring atmega88,$(STRIPMMCU)), atmega88)
 	else ifeq ($(STRIPMMCU), atmega88a) 
  		TARGET_P = m88
 	else ifeq ($(STRIPMMCU), atmega88p) 
- 		TARGET_P = m88
+ 		TARGET_P = m88p
 	else ifeq ($(STRIPMMCU), atmega88pa)
-		TARGET_P = m88pa
+		TARGET_P = m88p
 	else
 $(error Target $(MMCU) no soportado)
  	endif
